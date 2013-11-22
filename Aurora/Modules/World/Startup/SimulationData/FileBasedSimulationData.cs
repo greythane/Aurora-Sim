@@ -143,14 +143,13 @@ namespace Aurora.Modules
             {
                 info = new RegionInfo();
                 info.RegionID = UUID.Random();
-                info.RegionPort = 9000;
+				info.RegionPort = 9000;
             }
             info.RegionName = MainConsole.Instance.Prompt("Region Name: ", info.RegionName);
             
             info.RegionLocX =
                 int.Parse(MainConsole.Instance.Prompt("Region Location X: ",
-                ((info.RegionLocX == 0 ? 1000 : info.RegionLocX/Constants.RegionSize)).ToString()))*
-                Constants.RegionSize;
+                ((info.RegionLocX == 0 ? 1000 : info.RegionLocX/Constants.RegionSize)).ToString()))*Constants.RegionSize;
             info.RegionLocY =
                 int.Parse(MainConsole.Instance.Prompt("Region location Y: ",
                                                       ((info.RegionLocY == 0 ? 1000 : info.RegionLocY/Constants.RegionSize)).ToString()))*
@@ -162,7 +161,7 @@ namespace Aurora.Modules
             info.RegionPort = int.Parse(MainConsole.Instance.Prompt("Region Port: ", info.RegionPort.ToString()));
             
             info.RegionType = MainConsole.Instance.Prompt("Region Type: ",
-                                                          (info.RegionType == "" ? "Mainland" : info.RegionType));
+                                                          (info.RegionType == "" ? "Flatland" : info.RegionType));
 
             info.SeeIntoThisSimFromNeighbor =
                 bool.Parse(

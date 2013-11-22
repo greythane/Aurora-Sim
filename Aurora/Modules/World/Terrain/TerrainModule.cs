@@ -1728,7 +1728,8 @@ namespace Aurora.Modules.Terrain
 				float desiredRange = desiredMax - desiredMin;
 				//MainConsole.Instance.InfoFormat("Desired {0}, {1} = {2}", new Object[] { desiredMin, desiredMax, desiredRange });
 
-				if (desiredRange == 0d) {
+				// a bit ambiguous here... // if (desiredRange == 0d) {
+				if (desiredRange >= 0) {
 					// delta is zero so flatten at requested height
 					tmodule.InterfaceFillTerrain (scene, cmd);
 				} else {
@@ -1850,7 +1851,56 @@ namespace Aurora.Modules.Terrain
 			}
         }
 
-        private void InterfaceShowDebugStats(IScene scene, string[] cmd)
+		/// <summary>
+		/// User interface for user generation of terrain in the selected region.
+		/// </summary>
+		/// <param name="scene">Scene.</param>
+		/// <param name="cmd">Cmd.</param>
+		private void InterfaceGenerateTerrain(IScene scene, string[] cmd)
+		{
+			if (cmd.Count() < 3)
+			{
+				MainConsole.Instance.Info(
+					"You need to specify what terrain type to use, Flatland, Mainland or Island.");
+				return;
+			}
+
+			string landType = cmd[2];
+			landType = landType.ToLower();
+			if ((landType != "flatland") && (cmd.Count() < 5))
+			{
+				MainConsole.Instance.Info(
+					"You need to specify some heights to use <min> <max>.");
+				return;
+			}
+
+			//assume flatland paramters
+			float minHeight = (float) m_scene.RegionInfo.RegionSettings.WaterHeight + 1;
+			float maxHeight = minHeight;
+			int smoothing = 1;
+
+			if (cmd.Count () >= 5)
+			{
+				minHeight = float.Parse (cmd [3]);
+				maxHeight = float.Parse (cmd [4]);
+			}
+
+			if (cmd.Count () == 6)
+				smoothing = int.Parse (cmd [5]);
+
+			List<TerrainModule> m = FindModuleForScene(MainConsole.Instance.ConsoleScene);
+			foreach (TerrainModule tmodule in m)
+			{
+				// try for the land type
+				tmodule.m_channel.GenerateTerrain (landType, minHeight, maxHeight, smoothing, scene);
+				tmodule.CheckForTerrainUpdates ();
+
+				MainConsole.Instance.Info("New terrain generated.");
+
+			}
+		}
+
+		private void InterfaceShowDebugStats(IScene scene, string[] cmd)
         {
 			List<TerrainModule> m = FindModuleForScene(MainConsole.Instance.ConsoleScene);
 			foreach (TerrainModule tmodule in m)
@@ -1913,10 +1963,14 @@ namespace Aurora.Modules.Terrain
                                                                  (" " + loader.Key + " (" + loader.Value + ")"));
 
 			MainConsole.Instance.Info(
-                "terrain load <FileName> - Loads a terrain from a specified file. \n FileName: The file you wish to load from, the file extension determines the loader to be used. \n Supported extensions include: " +
+                "terrain load <FileName> - Loads a terrain from a specified file. "+
+				"\n FileName: The file you wish to load from, the file extension determines the loader to be used."+
+				"\n Supported extensions include: " +
                 supportedFileExtensions);
             MainConsole.Instance.Info(
-                "terrain save <FileName> - Saves the current heightmap to a specified file. \n FileName: The destination filename for your heightmap, the file extension determines the format to save in. \n Supported extensions include: " +
+                "terrain save <FileName> - Saves the current heightmap to a specified file. "+
+				"\n FileName: The destination filename for your heightmap, the file extension determines the format to save in. "+
+				"\n Supported extensions include: " +
                 supportedFileExtensions);
             MainConsole.Instance.Info(
                 "terrain load-tile <file width> <file height> <minimum X tile> <minimum Y tile> - Loads a terrain from a section of a larger file. " +
@@ -1946,6 +2000,12 @@ namespace Aurora.Modules.Terrain
                 "terrain rescale <min> <max> - Rescales the current terrain to fit between the given min and max heights" +
                 "\n Min: min terrain height after rescaling" +
                 "\n Max: max terrain height after rescaling");
+			MainConsole.Instance.Info(
+				"terrain generate <type> <Min> <Max> [smoothing]- Genrate new terrain to fit between the given min and max heights" +
+				"\n Type: Flatland, Mainland, Island" +
+				"\n Min: min terrain height after rescaling" +
+				"\n Max: max terrain height after rescaling"+
+				"\n Smoothing: [Optional] number of smoothing passes");
         }
 
 		/// <summary>
@@ -2032,6 +2092,14 @@ namespace Aurora.Modules.Terrain
                                                          "\n Min: min terrain height after rescaling" +
                                                          "\n Max: max terrain height after rescaling",
                                                          InterfaceRescaleTerrain, true, false);
+				MainConsole.Instance.Commands.AddCommand("terrain generate",
+				                                         "terrain generate <type> <min> <max> [smoothing]",
+				                                         "Generate new terrain to fit between the given min and max heights" +
+				                                         "\n Type: Flatland, Mainland, Island" +
+				                                         "\n Min: min terrain height after rescaling" +
+				                                         "\n Max: max terrain height after rescaling"+
+				                                         "\n Smoothing: [Optional - default 2] number of smoothing passes to perform",
+				                                         InterfaceGenerateTerrain, true, false);
                 MainConsole.Instance.Commands.AddCommand("terrain help",
                                                          "terrain help", "Gives help about the terrain module.",
                                                          InterfaceHelp, true, false);

@@ -2021,7 +2021,7 @@ namespace Aurora.ScriptEngine.AuroraDotNetEngine
                 else
                     return new LSLFloat(0.0);
             }
-//  not sure why this is not available for everything.. it is needed for both Linux & OSX	#if !LINUX 
+#if !UNIX 
             public static bool operator ==(LSLFloat f1, LSLFloat f2)
             {
                 return f1.value == f2.value;
@@ -2031,7 +2031,7 @@ namespace Aurora.ScriptEngine.AuroraDotNetEngine
             {
                 return f1.value != f2.value;
             }
-// #endif
+#endif
 
             public static LSLFloat operator ++(LSLFloat f)
             {

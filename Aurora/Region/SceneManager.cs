@@ -799,7 +799,10 @@ namespace Aurora.Region
 
 			string rName;
 			if (MainConsole.Instance.ConsoleScene == null) {
-				MainConsole.Instance.Info(String.Format(regionName+" not found? (Case is important)"));
+				if (regionName.ToLower() != "root")
+				{
+					MainConsole.Instance.Info(String.Format(regionName+" not found? (Case is important)"));
+				}
 				rName = "root";
 			} else {
 				rName = MainConsole.Instance.ConsoleScene.RegionInfo.RegionName;

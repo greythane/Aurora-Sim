@@ -35,7 +35,6 @@ namespace Aurora.Modules.Terrain.FileLoaders
 {
     internal class PNG : GenericSystemDrawing
     {
-
 		public override void SaveFile(string filename, ITerrainChannel map)
         {
             Bitmap colours = CreateGrayscaleBitmapFromMap(map);
