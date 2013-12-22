@@ -55,8 +55,10 @@ namespace Aurora.Framework.Utilities
         /// <returns></returns>
         public static string GetServerReleaseNotesURL()
         {
-            return (MainServer.Instance.Secure ? "https://" : "http://") + GetExternalIp() +
+			return (MainServer.Instance.Secure ? "https://" : "http://") + MainServer.Instance.HostName +
                    ":" + MainServer.Instance.Port.ToString() + "/AuroraServerRelease" + AuroraServerVersion() + ".html";
+			//			return (MainServer.Instance.Secure ? "https://" : "http://") + GetExternalIp() +
+			//	":" + MainServer.Instance.Port.ToString() + "/AuroraServerRelease" + AuroraServerVersion() + ".html";
         }
 
         /// <summary>
@@ -65,8 +67,10 @@ namespace Aurora.Framework.Utilities
         /// <returns></returns>
         public static string GetAddress()
         {
-            return (MainServer.Instance.Secure ? "https://" : "http://") + GetExternalIp() + ":" +
+			return (MainServer.Instance.Secure ? "https://" : "http://") + MainServer.Instance.HostName + ":" +
                    MainServer.Instance.Port.ToString();
+			//			return (MainServer.Instance.Secure ? "https://" : "http://") + GetExternalIp() + ":" +
+			//	MainServer.Instance.Port.ToString();
         }
 
         /// <summary>

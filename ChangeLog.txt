@@ -2,6 +2,11 @@
 Aurora-Sim (Dev) 
 Rowan D <greythane@gmail.com>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Dec 6th, 2013
+* Aurora.Framework.Utilities - utilities.cs
+	Update GetServerReleaseNotesURL() and GetAddress() to return the defined hostname as specified in the 
+	Aurora.ini ( will return external IP if not defined)
+
 
 << TerrainGenerator branch >>
 * Aurora.Framework.SceneInfo - TerrainChannel.cs
